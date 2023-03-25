@@ -340,6 +340,10 @@ void ChassisBase<T...>::updateOdom(const ros::Time& time, const ros::Duration& p
     odom2base_.transform.translation.x = odom2base.getOrigin().x();
     odom2base_.transform.translation.y = odom2base.getOrigin().y();
     odom2base_.transform.translation.z = odom2base.getOrigin().z();
+    odom2base_.transform.rotation.x = odom2base.getRotation().x();
+    odom2base_.transform.rotation.y = odom2base.getRotation().y();
+    odom2base_.transform.rotation.z = odom2base.getRotation().z();
+    odom2base_.transform.rotation.w = odom2base.getRotation().w();
     topic_update_ = false;
   }
 
