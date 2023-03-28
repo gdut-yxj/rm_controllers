@@ -307,23 +307,6 @@ void ChassisBase<T...>::updateOdom(const ros::Time& time, const ros::Duration& p
         tf2::Vector3(odom_msg->pose.pose.position.x, odom_msg->pose.pose.position.y, odom_msg->pose.pose.position.z));
     world2sensor.setRotation(tf2::Quaternion(odom_msg->pose.pose.orientation.x, odom_msg->pose.pose.orientation.y,
                                              odom_msg->pose.pose.orientation.z, odom_msg->pose.pose.orientation.w));
-
-    if (world2odom_.getRotation() == tf2::Quaternion::getIdentity())  // First received
-    {
-      tf2::Transform odom2sensor;
-      try
-      {
-        geometry_msgs::TransformStamped tf_msg =
-            robot_state_handle_.lookupTransform("odom", "livox_frame", odom_msg->header.stamp);
-        tf2::fromMsg(tf_msg.transform, odom2sensor);
-      }
-      catch (tf2::TransformException& ex)
-      {
-        ROS_WARN("%s", ex.what());
-        return;
-      }
-      world2odom_ = world2sensor * odom2sensor.inverse();
-    }
     tf2::Transform base2sensor;
     try
     {
@@ -336,7 +319,7 @@ void ChassisBase<T...>::updateOdom(const ros::Time& time, const ros::Duration& p
       ROS_WARN("%s", ex.what());
       return;
     }
-    tf2::Transform odom2base = world2odom_.inverse() * world2sensor * base2sensor.inverse();
+    tf2::Transform odom2base = world2sensor * base2sensor.inverse();
     odom2base_.transform.translation.x = odom2base.getOrigin().x();
     odom2base_.transform.translation.y = odom2base.getOrigin().y();
     odom2base_.transform.translation.z = odom2base.getOrigin().z();
